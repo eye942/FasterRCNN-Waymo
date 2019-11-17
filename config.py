@@ -85,19 +85,19 @@ class AttrDict():
 
 config = AttrDict()
 _C = config     # short alias to avoid coding
-
+ 
 # mode flags ---------------------
 _C.TRAINER = 'replicated'  # options: 'horovod', 'replicated'
-_C.MODE_MASK = True        # Faster R-CNN or Mask R-CNN
+_C.MODE_MASK = False        # Faster R-CNN or Mask R-CNN
 _C.MODE_FPN = True
 
 # dataset -----------------------
-_C.DATA.BASEDIR = '/path/to/your/DATA/DIR'
+_C.DATA.BASEDIR = '/hdd/datasets/waymo'
 # All available dataset names are defined in `dataset/coco.py:register_coco`.
 # All TRAIN dataset will be concatenated for training.
-_C.DATA.TRAIN = ('coco_train2017',)   # i.e. trainval35k
+_C.DATA.TRAIN = ('waymo_train',)   # i.e. trainval35k
 # Each VAL dataset will be evaluated separately (instead of concatenated)
-_C.DATA.VAL = ('coco_val2017',)  # AKA minival2014
+_C.DATA.VAL = ('waymo_val',)  # AKA minival2014
 
 # These two configs will be populated later inside `finalize_configs`.
 _C.DATA.NUM_CATEGORY = -1  # without the background class (e.g., 80 for COCO)
@@ -112,7 +112,7 @@ _C.DATA.ABSOLUTE_COORD = True
 _C.DATA.NUM_WORKERS = 10
 
 # backbone ----------------------
-_C.BACKBONE.WEIGHTS = ''
+_C.BACKBONE.WEIGHTS = 'ImageNet-R50-AlignPadding.npz'
 # To train from scratch, set it to empty, and set FREEZE_AT to 0
 # To train from ImageNet pre-trained models, use the one that matches your
 #   architecture from http://models.tensorpack.com under the 'FasterRCNN' section.
@@ -141,7 +141,7 @@ _C.TRAIN.WEIGHT_DECAY = 1e-4
 _C.TRAIN.BASE_LR = 1e-2  # defined for total batch size=8. Otherwise it will be adjusted automatically
 _C.TRAIN.WARMUP = 1000   # in terms of iterations. This is not affected by #GPUs
 _C.TRAIN.WARMUP_INIT_LR = 1e-2 * 0.33  # defined for total batch size=8. Otherwise it will be adjusted automatically
-_C.TRAIN.STEPS_PER_EPOCH = 500
+_C.TRAIN.STEPS_PER_EPOCH = 100000
 _C.TRAIN.STARTING_EPOCH = 1  # the first epoch to start with, useful to continue a training
 
 # LR_SCHEDULE means equivalent steps when the total batch size is 8.
@@ -151,7 +151,7 @@ _C.TRAIN.STARTING_EPOCH = 1  # the first epoch to start with, useful to continue
 
 _C.TRAIN.LR_SCHEDULE = "1x"      # "1x" schedule in detectron
 _C.TRAIN.EVAL_PERIOD = 50  # period (epochs) to run evaluation
-_C.TRAIN.CHECKPOINT_PERIOD = 20  # period (epochs) to save model
+_C.TRAIN.CHECKPOINT_PERIOD = 15  # period (epochs) to save model
 
 # preprocessing --------------------
 # Alternative old (worse & faster) setting: 600
@@ -186,7 +186,7 @@ _C.RPN.HEAD_DIM = 1024      # used in C4 only
 _C.RPN.TRAIN_PRE_NMS_TOPK = 12000
 _C.RPN.TRAIN_POST_NMS_TOPK = 2000
 _C.RPN.TEST_PRE_NMS_TOPK = 6000
-_C.RPN.TEST_POST_NMS_TOPK = 1000   # if you encounter OOM in inference, set this to a smaller number
+_C.RPN.TEST_POST_NMS_TOPK = 600   # if you encounter OOM in inference, set this to a smaller number
 # for FPN, #proposals per-level and #proposals after merging are (for now) the same
 # if FPN.PROPOSAL_MODE = 'Joint', these options have no effect
 _C.RPN.TRAIN_PER_LEVEL_NMS_TOPK = 2000
